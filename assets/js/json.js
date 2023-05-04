@@ -4,8 +4,8 @@
 function loadTable(CountryName ='') {
 
     const xhttp = new XMLHttpRequest();
-    xhttp.open("GET", `http://localhost:3000/Countries`);
-    xhttp.send();
+    xhttp.open("GET", `http://localhost:3000/Countries?CountryName_like=${CountryName}`);
+    xhttp.send();            //sending the request
     //https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest 
     //XMLHttpRequest Methods and Properties
     xhttp.onreadystatechange = function () {
@@ -173,8 +173,9 @@ function showUserEditBox(id) {
                     '<label>Capital Name:</label><input id="Capital" class="swal2-input" placeholder="Capital" value="' +
                     objects["Capital"] +
                     '">' +
-                    '<label>Continent Name:</label><select><option value="' + objects["Continent"] '"></option></select>'
-                    +
+                    '<label>Continent Name:</label><input id="Continent" class="swal2-input" placeholder="Continent" value="' +
+                    objects["Continent"] +
+                    '">' +
                      '<label>Population:</label><input id="Population" class="swal2-input" placeholder="Population" value="' +
                      objects["Population"] +
                      '">' +
@@ -199,7 +200,7 @@ function showUserEditBox(id) {
                     } else if (Population <= 0) {
                         Swal.showValidationMessage(" Population must not be negative");
                     } else if (!/^[a-zA-Z\s]+$/.test(CountryName) || !/^[a-zA-Z\s]+$/.test(Capital) || !/^[a-zA-Z\s]+$/.test(Continent)) {
-                        Swal.showValidationMessage("Country name, capital, and continent must contain only letters and spaces");
+                        Swal.showValidationMessage("Country name and capital must contain only letters and spaces");
                     } else {
                         userEdit(id);
                     }
