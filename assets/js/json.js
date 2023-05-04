@@ -1,10 +1,10 @@
 //https://javascript.info/xmlhttprequest#http-headers
 // npm install -g json-server
 // json-server --watch db.json in Terminal(command prompt)
-function loadTable(CountryName='') {
+function loadTable(CountryName ='') {
 
     const xhttp = new XMLHttpRequest();
-    xhttp.open("GET", "http://localhost:3000/Countries");
+    xhttp.open("GET", `http://localhost:3000/Countries`);
     xhttp.send();
     //https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest 
     //XMLHttpRequest Methods and Properties
@@ -106,7 +106,7 @@ function userCreate() {
                     loadTable();
                 }
             };
-            xhttp.open("POST", "http://localhost:3000/countries");
+            xhttp.open("POST", "http://localhost:3000/Countries");
             xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
             xhttp.send(
                 JSON.stringify({
@@ -173,12 +173,11 @@ function showUserEditBox(id) {
                     '<label>Capital Name:</label><input id="Capital" class="swal2-input" placeholder="Capital" value="' +
                     objects["Capital"] +
                     '">' +
-                    '<label>Continent Name:</label><input id="Continent" class="swal2-input" placeholder="Continent" value="' +
-                    objects["Continent"] +
-                    '">' +
-                    '<label>Population:</label><input id="Population" class="swal2-input" placeholder="Population" value="' +
-                    objects["Population"] +
-                    '">' +
+                    '<label>Continent Name:</label><select><option value="' + objects["Continent"] '"></option></select>'
+                    +
+                     '<label>Population:</label><input id="Population" class="swal2-input" placeholder="Population" value="' +
+                     objects["Population"] +
+                     '">' +
                     '<input id="FlagImage" type="file" class="swal2-input" placeholder="FlagImage" value="' +
                     objects["FlagImage"] +
                     '">'
