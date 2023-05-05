@@ -99,15 +99,17 @@ function userCreate() {
             xhttp.onreadystatechange = function () {
                 if (this.readyState == 4 && this.status == 200) {
                     const objects = JSON.parse(this.responseText);
-                    Swal.fire({
-                        title: 'Country added succesfully',
-                        icon: 'success'
-                    });
                     loadTable();
                 }
             };
             xhttp.open("POST", "http://localhost:3000/Countries");
             xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            swal.fire({
+                icon:"success",
+                title:"country added successfully" ,
+                // focusConfirm: false,
+                showConfirmButton: false,
+            })
             xhttp.send(
                 JSON.stringify({
                     CountryName: CountryName,
@@ -124,8 +126,10 @@ function userCreate() {
             if (this.readyState == 4 && this.status == 200) {
                 const objects = JSON.parse(this.responseText);
                 Swal.fire({
-                    title: "Country added succesfully",
-                    icon: "success"
+                    icon: "success",
+                    title: "Country added successfully" ,
+                    // focusConfirm: false,
+                    showConfirmButton: false,            
                 });
                 loadTable();
             }
@@ -145,6 +149,7 @@ function userCreate() {
     };
 }
 
+// record editing 
 function showUserEditBox(id) {
     console.log(id);
     const xhttp = new XMLHttpRequest();
@@ -206,6 +211,7 @@ function showUserEditBox(id) {
     };
 }
 
+// updating the edited record
 function userEdit(id) {
     //const id = document.getElementById("id").value;
     const CountryName = document.getElementById("CountryName").value;
@@ -229,8 +235,9 @@ function userEdit(id) {
                     const objects = JSON.parse(this.responseText);
                     Swal.fire({
                         icon: "success",
-                        title: "Country added",
-                        text: objects["message"]
+                        title: "Country updated successfully",
+                        // focusConfirm: false,
+                        showConfirmButton: false,
                     });
                     loadTable();
                 }
@@ -254,8 +261,9 @@ function userEdit(id) {
                 const objects = JSON.parse(this.responseText);
                 Swal.fire({
                     icon: "success",
-                    title: "Country edited",
-                    text: objects["message"]
+                    title: "Country updated successfully",
+                    // focusConfirm: false,
+                    showConfirmButton: false,
                 });
                 loadTable();
             }
@@ -274,6 +282,7 @@ function userEdit(id) {
     }
 }
 
+// delete the record
 function userDelete(id) {
     console.log(id);
     const xhttp = new XMLHttpRequest();
