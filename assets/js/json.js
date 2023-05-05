@@ -124,8 +124,8 @@ function userCreate() {
             if (this.readyState == 4 && this.status == 200) {
                 const objects = JSON.parse(this.responseText);
                 Swal.fire({
-                    title: 'Country added succesfully',
-                    icon: 'success'
+                    title: "Country added succesfully",
+                    icon: "success"
                 });
                 loadTable();
             }
@@ -156,7 +156,7 @@ function showUserEditBox(id) {
             //const user = objects["objects"];
             console.log(objects);
             Swal.fire({
-                title: "Edit Country",
+                title: "Edit Country Details",
                 html:
                     '<input id="id" type="hidden" value="' +
                     objects[`${id}`] +
@@ -191,7 +191,6 @@ function showUserEditBox(id) {
 
                     if (!CountryName || !Capital || !Continent || !Population || !FlagImage) {
                         Swal.showValidationMessage("Please fill in all the fields");
-
                     } else if (!pattern.test(Population)) {
                         Swal.showValidationMessage("Population only contains numbers and comma")
                     } else if (Population <= 0) {
