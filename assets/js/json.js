@@ -1,13 +1,9 @@
-//https://javascript.info/xmlhttprequest#http-headers
-// npm install -g json-server
-// json-server --watch db.json in Terminal(command prompt)
-function loadTable(CountryName ='') {
+// loading and show the table
+function loadTable(CountryName = '') {
 
     const xhttp = new XMLHttpRequest();
     xhttp.open("GET", `http://localhost:3000/Countries?CountryName_like=${CountryName}`);
-    xhttp.send();            //sending the request
-    //https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest 
-    //XMLHttpRequest Methods and Properties
+    xhttp.send();//sending the request
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
             console.log(this.responseText);
@@ -38,26 +34,25 @@ function loadTable(CountryName ='') {
         }
     };
 }
-
 loadTable();
 
 // searching
 function search() {
     const CountryName = document.getElementById("searchvalue").value;
     loadTable(CountryName);
-  }
+}
 
+// creating new record
 function showUserCreateBox() {
-    //https://sweetalert2.github.io/v9.html
     Swal.fire({
         title: "Create country",
         html:
             '<input id="id" type="hidden">' +
             '<input id="CountryName" class="swal2-input" placeholder="CountryName">' +
             '<input id="Capital" class="swal2-input" placeholder="Capital">' +
-            '<input id="Continent" class="swal2-input" placeholder="Continent">'+
-            '<input id="Population" type="number" class="swal2-input" placeholder="Population">' +
-            '<input id="FlagImage" type="file" class="swal2-input" >',
+            '<select id="Continent" class="swal2-input" style="width:270px";><option>select continent</option><option>Africa</option><option>Antarctica</option><option>Asia</option><option>Australia </option><option>Europe</option><option>North America</option><option>South America</option>' +
+            '<input id="Population" class="swal2-input" placeholder="Population" style="width:270px";>' +
+            '<input id="FlagImage" type="file" class="swal2-input" style="width:270px";>',
         focusConfirm: false,
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
@@ -66,14 +61,19 @@ function showUserCreateBox() {
             const CountryName = document.getElementById("CountryName").value;
             const Capital = document.getElementById("Capital").value;
             const Continent = document.getElementById("Continent").value;
-            const Population = parseInt(document.getElementById("Population").value);
+            const Population = document.getElementById("Population").value;
+            const FlagImage = document.getElementById("FlagImage").value;
+            const pattern = /^[0-9,]+$/;
 
-            if (!CountryName || !Capital || !Continent || !Population) {
+
+            if (!CountryName || !Capital || !Continent || !Population || !FlagImage) {
                 Swal.showValidationMessage("Please fill in all the fields");
-            }  else if (Population <= 0) {
+            } else if (!pattern.test(Population)) {
+                Swal.showValidationMessage("Population only contains numbers and comma")
+            } else if (Population <= 0) {
                 Swal.showValidationMessage(" Population must not be negative");
             } else if (!/^[a-zA-Z\s]+$/.test(CountryName) || !/^[a-zA-Z\s]+$/.test(Capital) || !/^[a-zA-Z\s]+$/.test(Continent)) {
-                Swal.showValidationMessage("Country name, capital, and continent must contain only letters and spaces");
+                Swal.showValidationMessage("Country name and Capital name must contain only letters and spaces");
             } else {
                 userCreate();
             }
@@ -82,6 +82,7 @@ function showUserCreateBox() {
 
 }
 
+// creating and displaying new record
 function userCreate() {
     const CountryName = document.getElementById("CountryName").value;
     const Capital = document.getElementById("Capital").value;
@@ -89,19 +90,18 @@ function userCreate() {
     const Population = document.getElementById("Population").value;
     const FlagImageInput = document.getElementById("FlagImage");
     const FlagImage = FlagImageInput.files[0];
-
     const xhttp = new XMLHttpRequest();
     if (FlagImage) {
         const reader = new FileReader();
         reader.onload = function () {
             const dataUrl = reader.result;
+            console.log(dataUrl);
             xhttp.onreadystatechange = function () {
                 if (this.readyState == 4 && this.status == 200) {
                     const objects = JSON.parse(this.responseText);
                     Swal.fire({
-                        icon: 'success',
-                        title: 'Country added',
-                        text: objects["message"]
+                        title: 'Country added succesfully',
+                        icon: 'success'
                     });
                     loadTable();
                 }
@@ -124,30 +124,24 @@ function userCreate() {
             if (this.readyState == 4 && this.status == 200) {
                 const objects = JSON.parse(this.responseText);
                 Swal.fire({
-                    icon: 'success',
-                    title: 'Country added',
-                    text: objects["message"]
+                    title: 'Country added succesfully',
+                    icon: 'success'
                 });
                 loadTable();
             }
         };
-    xhttp.open("POST", "http://localhost:3000/Countries");
-    xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-    xhttp.send(
-        JSON.stringify({
-            CountryName: CountryName,
-            Capital: Capital,
-            Continent: Continent,
-            Population: Population,
-            FlagImage: null,
-        })
-    );
-    // xhttp.onreadystatechange = function () {
-    //     if (this.readyState == 4 && this.status == 200) {
-    //         const objects = JSON.parse(this.responseText);
-    //         Swal.fire(objects["message"]);
-    //         loadTable();
-    //     }
+        xhttp.open("POST", "http://localhost:3000/Countries");
+        xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        xhttp.send(
+            JSON.stringify({
+                CountryName: CountryName,
+                Capital: Capital,
+                Continent: Continent,
+                Population: Population,
+                FlagImage: null,
+            })
+        );
+
     };
 }
 
@@ -164,22 +158,21 @@ function showUserEditBox(id) {
             Swal.fire({
                 title: "Edit Country",
                 html:
-                    '<label>Country Name:</label><input id="id" type="hidden" value="' +
+                    '<input id="id" type="hidden" value="' +
                     objects[`${id}`] +
                     '">' +
                     '<input id="CountryName" class="swal2-input" placeholder="CountryName" value="' +
                     objects["CountryName"] +
                     '">' +
-                    '<label>Capital Name:</label><input id="Capital" class="swal2-input" placeholder="Capital" value="' +
+                    '<input id="Capital" class="swal2-input" placeholder="Capital" value="' +
                     objects["Capital"] +
                     '">' +
-                    '<label>Continent Name:</label><input id="Continent" class="swal2-input" placeholder="Continent" value="' +
-                    objects["Continent"] +
+                    '<select id="Continent" class="swal2-input" style="width:270px";><option>select continent</option><option>Africa</option><option>Antarctica</option><option>Asia</option><option>Australia </option><option>Europe</option><option>North America</option><option>South America</option>' + "<br>" +
+
+                    '<input id="Population" class="swal2-input" placeholder="Population" value="' +
+                    objects["Population"] +
                     '">' +
-                     '<label>Population:</label><input id="Population" class="swal2-input" placeholder="Population" value="' +
-                     objects["Population"] +
-                     '">' +
-                    '<input id="FlagImage" type="file" class="swal2-input" placeholder="FlagImage" value="' +
+                    '<input id="FlagImage" style="width:270px"; type="file" class="swal2-input" placeholder="FlagImage" value="' +
                     objects["FlagImage"] +
                     '">'
                 ,
@@ -191,16 +184,20 @@ function showUserEditBox(id) {
                     const CountryName = document.getElementById("CountryName").value;
                     const Capital = document.getElementById("Capital").value;
                     const Continent = document.getElementById("Continent").value;
-                    const Population = parseInt(document.getElementById("Population").value);
+                    const Population = document.getElementById("Population").value;
+                    const FlagImage = document.getElementById("FlagImage").value;
+                    const pattern = /^[0-9,]+$/;
 
-                    if (!CountryName || !Capital || !Continent || !Population) {
+
+                    if (!CountryName || !Capital || !Continent || !Population || !FlagImage) {
                         Swal.showValidationMessage("Please fill in all the fields");
-                    } else if (isNaN(Population)) {
-                        Swal.showValidationMessage("Population must be numbers");
+
+                    } else if (!pattern.test(Population)) {
+                        Swal.showValidationMessage("Population only contains numbers and comma")
                     } else if (Population <= 0) {
                         Swal.showValidationMessage(" Population must not be negative");
                     } else if (!/^[a-zA-Z\s]+$/.test(CountryName) || !/^[a-zA-Z\s]+$/.test(Capital) || !/^[a-zA-Z\s]+$/.test(Continent)) {
-                        Swal.showValidationMessage("Country name and capital must contain only letters and spaces");
+                        Swal.showValidationMessage("Country name and Capital name a must contain only letters and spaces");
                     } else {
                         userEdit(id);
                     }
@@ -219,12 +216,27 @@ function userEdit(id) {
     const FlagImageInput = document.getElementById("FlagImage");
     const FlagImage = FlagImageInput.files[0];
     const xhttp = new XMLHttpRequest();
+    console.log("useredit --1")
     xhttp.open("PUT", `http://localhost:3000/Countries/${id}`);
     xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
     if (FlagImage) {
         const reader = new FileReader();
         reader.onload = function () {
             const dataUrl = reader.result;
+
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    const objects = JSON.parse(this.responseText);
+                    Swal.fire({
+                        icon: "success",
+                        title: "Country added",
+                        text: objects["message"]
+                    });
+                    loadTable();
+                }
+            };
+            xhttp.open("PUT", `http://localhost:3000/Countries/${id}`);
+            xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
             xhttp.send(
                 JSON.stringify({
                     CountryName: CountryName,
@@ -237,6 +249,19 @@ function userEdit(id) {
         };
         reader.readAsDataURL(FlagImage);
     } else {
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                const objects = JSON.parse(this.responseText);
+                Swal.fire({
+                    icon: "success",
+                    title: "Country edited",
+                    text: objects["message"]
+                });
+                loadTable();
+            }
+        };
+        xhttp.open("PUT", `http://localhost:3000/Countries/${id}`);
+        xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
         xhttp.send(
             JSON.stringify({
                 CountryName: CountryName,
@@ -247,39 +272,10 @@ function userEdit(id) {
             })
         );
     }
-    xhttp.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 200) {
-            const objects = JSON.parse(this.responseText);
-            loadTable();
-            Swal.fire({
-                title: 'Country Edited',
-                text: objects["message"],
-                icon: 'success'
-            });
-        }
-    };
-    // xhttp.send(
-    //     JSON.stringify({
-    //         // id: id,
-    //         CountryName: CountryName,
-    //         Capital: Capital,
-    //         Continent: Continent,
-    //         Population: Population,
-    //         FlagImage: "https://www.melivecode.com/users/1.png",
-    //     })
-    // );
-    // xhttp.onreadystatechange = function () {
-    //     if (this.readyState == 4 && this.status == 200) {
-    //         const objects = JSON.parse(this.responseText);
-    //         Swal.fire(objects["message"]);
-    //         loadTable();
-    //     }
-    // };
 }
 
 function userDelete(id) {
-    console.log(id)
-        ;
+    console.log(id);
     const xhttp = new XMLHttpRequest();
     xhttp.open(`DELETE`, `http://localhost:3000/countries/${id}`);
     xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
@@ -319,3 +315,4 @@ function userDelete(id) {
         }
     })
 }
+
