@@ -221,9 +221,10 @@ function userEdit(id) {
     xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
     if (FlagImage) {
         const reader = new FileReader();
+        console.log(reader);
         reader.onload = function () {
             const dataUrl = reader.result;
-
+            console.log(dataUrl);
             xhttp.onreadystatechange = function () {
                 if (this.readyState == 4 && this.status == 200) {
                     const objects = JSON.parse(this.responseText);
